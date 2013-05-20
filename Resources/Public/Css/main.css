@@ -1,0 +1,68 @@
+#mapping-main-content {
+
+}
+
+#mapping-panel-structures {
+
+}
+
+#mapping-panel-template {
+
+}
+
+#mapping-panel-elements {
+}
+
+#mapping-main-content .panel-header {
+	height: 50px;
+}
+
+#mapping-main-content .panel-body {
+
+}
+
+#mapping-main-content .section-header {
+	padding-bottom: 3px;
+}
+
+#mapping-main-content:after,
+#mapping-main-content .panel:after,
+#mapping-panel-mapping .panel-body:after {
+  display: table;
+  content: "";
+  clear: both;
+}
+
+
+.mapping-active *:hover {
+	cursor: pointer;
+	-moz-box-shadow: 0 0 5px #FF0000;
+	-webkit-box-shadow: 0 0 5px #FF0000;
+	box-shadow: 0 0 5px #FF0000;
+	_border:1px solid #FF0000;
+	_margin: -1px 0 0 -1px;
+}
+
+.mapping-active .mapping-selected,
+.mapping-active .mapping-defined {
+	cursor: pointer;
+	-moz-box-shadow: 0 0 5px #20c3ff;
+	-webkit-box-shadow: 0 0 5px #20c3ff;
+	box-shadow: 0 0 5px #20c3ff;
+	_border:1px solid #20c3ff;
+	_margin: -1px 0 0 -1px;
+}
+
+.btn.mapping-element-add,
+.btn.mapping-structure-update {
+	display: none;
+}
+
+.well.well-dark {
+	background-color: #F0F0F0;
+}
+
+iframe {
+	border: 0;
+	min-height: 500px;
+}

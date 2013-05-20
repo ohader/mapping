@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-05-19T20:22:38Z" product-name="mapping">
+		<header/>
+		<body>
+			<trans-unit id="tx_mapping_domain_model_structure" xml:space="preserve">
+				<source>Structure</source>
+			</trans-unit>
+			<trans-unit id="tx_mapping_domain_model_structure.title" xml:space="preserve">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_mapping_domain_model_structure.template" xml:space="preserve">
+				<source>Template</source>
+			</trans-unit>
+			<trans-unit id="tx_mapping_domain_model_structure.elements" xml:space="preserve">
+				<source>Elements</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

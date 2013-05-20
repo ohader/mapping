@@ -1,0 +1,34 @@
+{namespace mapping=OliverHader\Mapping\ViewHelpers}
+
+<mapping:be.container
+	pageTitle="Templates"
+    loadJQuery="1"
+	addCssFiles="{
+		0:'{f:uri.resource(path:\'Contrib/TwitterBootstrap/css/bootstrap.css\')}',
+		99:'{f:uri.resource(path:\'Css/main.css\')}'
+	}"
+	addJsFiles="{
+		0:'{f:uri.resource(path:\'Contrib/TwitterBootstrap/js/bootstrap.js\')}',
+		1:'{f:uri.resource(path:\'Contrib/XPath/jquery.xpath.js\')}',
+		90:'{f:uri.resource(path:\'JavaScript/XPathUtility.js\')}',
+		99:'{f:uri.resource(path:\'JavaScript/Module.js\')}'
+	}">
+
+	<div id="typo3-docheader">
+		<div class="typo3-docheader-functions">
+			<f:render section="docHeaderRow2" />
+		</div>
+		<div class="typo3-docheader-buttons">
+			<f:render section="docHeaderRow1" />
+		</div>
+	</div>
+	<div id="typo3-docbody">
+		<div id="typo3-inner-docbody" class="mapping-main">
+			<h2>Templates</h2>
+
+			<div id="mapping-main-content" class="contentWrapper container-fluid">
+				<f:render section="Content" />
+			</div>
+		</div>
+	</div>
+</mapping:be.container>

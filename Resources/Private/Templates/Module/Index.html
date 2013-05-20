@@ -1,0 +1,48 @@
+{namespace mapping=OliverHader\Mapping\ViewHelpers}
+
+<f:layout name="Main" />
+<f:section name="docHeaderRow1">
+</f:section>
+<f:section name="docHeaderRow2">
+</f:section>
+
+<f:section name="Content">
+	<mapping:response.headerData>
+		<script type="text/javascript">
+			var TxMappingSettings = <mapping:format.jsonEncode value="{settings}" />;
+			$(document).ready(function() {
+				TxMappingModule = new OliverHader_Mapping_Module(TxMappingSettings);
+			});
+		</script>
+	</mapping:response.headerData>
+
+	<div class="row-fluid">
+		<div id="mapping-panel-template" class="span9 pull-left well well-small">
+			<h3>Template</h3>
+			<div>
+				<div id="mapping-xpath-template" class="pull-left"></div>
+				<button class="btn mapping-element-add pull-right">+</button>
+			</div>
+			<div id="mapping-workspace-template"></div>
+		</div>
+		<div id="mapping-panel-structures" class="span3 pull-left well well-small">
+			<h3>Structures</h3>
+			<div>
+				<f:for each="{structures}" as="structure">
+					<div class="mapping-structure well well-small well-dark" data-structure="{structure.uid}">
+						<button class="btn mapping-structure-load pull-right"><i class="icon-pencil"></i></button>
+						<button class="btn mapping-structure-update pull-right"><i class="icon-ok-sign"></i></button>
+						<div><strong>{structure.title}</strong></div>
+						<div>{structure.template}</div>
+					</div>
+				</f:for>
+			</div>
+		</div>
+		<div id="mapping-panel-elements" class="span3 pull-left well well-small">
+			<h3>Elements</h3>
+			<div id="mapping-workspace-elements"></div>
+		</div>
+	</div>
+</f:section>
+
+
