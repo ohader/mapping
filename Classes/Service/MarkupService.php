@@ -48,36 +48,60 @@ class MarkupService implements SingletonInterface {
 	 */
 	public function getDomDocument($fileName) {
 		$filePath = GeneralUtility::getFileAbsFileName($fileName);
+		$directoryPath = dirname($filePath);
 
 		$document = new \DOMDocument();
 		$document->load($filePath);
 
-		/** @var $stylesheet \DOMNode */
-		foreach ($document->getElementsByTagName('link') as $stylesheet) {
-			$isStylesheet = (
-				$stylesheet->attributes->getNamedItem('rel') &&
-				$stylesheet->attributes->getNamedItem('href') &&
-				$stylesheet->attributes->getNamedItem('rel')->nodeValue === 'stylesheet'
-			);
+		$xpath = new \DOMXPath($document);
 
-			if ($isStylesheet) {
-				$href = $stylesheet->attributes->getNamedItem('href')->nodeValue;
-				if (preg_match('#^([a-z]+:/)?/#i', $href)) {
-					continue;
-				}
+		foreach ($xpath->query('//@href') as $attribute) {
+			$this->sanitizeUri($directoryPath, $attribute);
+		}
 
-				$uri = dirname($filePath) . '/' . $href;
-				$uri = substr($uri, strlen(PATH_site));
-
-				if (TYPO3_MODE === 'BE' && $uri !== FALSE) {
-					$uri = '../' . $uri;
-				}
-
-				$stylesheet->attributes->getNamedItem('href')->nodeValue = $uri;
-			}
+		foreach ($xpath->query('//@src') as $attribute) {
+			$this->sanitizeUri($directoryPath, $attribute);
 		}
 
 		return $document;
+	}
+
+	/**
+	 * @param string $directoryPath
+	 * @param \DOMAttr $attribute
+	 */
+	protected function sanitizeUri($directoryPath, \DOMAttr $attribute) {
+		$parentNode = $attribute->parentNode;
+
+		$isValid = (
+			$parentNode
+			&& !empty($attribute->nodeValue)
+			&& $attribute->nodeValue !== '#'
+ 			&& (
+				$attribute->nodeName === 'src'
+			||
+				$parentNode->nodeName === 'link'
+					&& $parentNode->attributes->getNamedItem('rel')
+					&& $parentNode->attributes->getNamedItem('rel')->nodeValue === 'stylesheet'
+			)
+		);
+
+		if (!$isValid) {
+			return;
+		}
+
+		$uri = $attribute->nodeValue;
+
+		if (!preg_match('#^([a-z]+:/)?/#i', $uri)) {
+			$sanitizedUri = rtrim($directoryPath, '/') . '/' . $uri;
+			$sanitizedUri = substr($sanitizedUri, strlen(PATH_site));
+
+			if (TYPO3_MODE === 'BE' && $sanitizedUri !== FALSE) {
+				$sanitizedUri = '../' . $sanitizedUri;
+			}
+
+			$attribute->nodeValue = $sanitizedUri;
+		}
 	}
 
 }
