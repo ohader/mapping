@@ -107,8 +107,6 @@
 	};
 
 	OliverHader_Mapping_Module.prototype.loadStructureCallback = function(structure) {
-		console.log(structure);
-
 		this.xpath = '';
 		this.structure = structure;
 		this.elements = structure.elements;
