@@ -1,6 +1,19 @@
 TYPO3 Template Mapping
 ======================
 
+Abstract
+--------
+
+This TYPO3 CMS extension aims to use the benefits of a template mapping engine (e.g. like
+TemplaVoila does) in regular available template engines like TEMPLATE (marker-based) or
+FLUIDTEMPLATE (based on Fluid).
+
+An additional backend module allows to define structures using an accordant DOM mapping
+interface to determine XPath and scope (*inner* or *outer*).
+
+This process eases modifications to the original template without having to know the
+concrete implementation in TYPO3 or TypoScript.
+
 TypoScript example
 ------------------
 
@@ -22,7 +35,7 @@ Example of new **MAPPING** content object in regular TEMPLATE object:
 				}
 				variable_second = TEXT
 				variable_second {
-					value = First Section
+					value = Second Section
 				}
 			}
 		}
