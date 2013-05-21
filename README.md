@@ -47,6 +47,6 @@ This is the TypoScript reference for the **MAPPING** content object.
 	<tr>
 		<td>renderAs</td>
 		<td>string / stdWrap</td>
-		<td>Defines how variables are substituted. Can be *fluid* or *marker*</td>
+		<td>Defines how variables are substituted. Can be <em>fluid</em> or <em>marker</em></td>
 	</tr>
 </table>
