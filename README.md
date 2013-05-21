@@ -9,7 +9,7 @@ TemplaVoila does) in regular available template engines like TEMPLATE (marker-ba
 FLUIDTEMPLATE (based on Fluid).
 
 An additional backend module allows to define structures using an accordant DOM mapping
-interface to determine XPath and scope (*inner* or *outer*).
+interface to determine XPath and scope (inner or outer).
 
 This process eases modifications to the original template without having to know the
 concrete implementation in TYPO3 or TypoScript.
