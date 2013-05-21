@@ -142,7 +142,7 @@
 		event.preventDefault();
 
 		this.xpath = XPathUtility.getElementXPath(event.target);
-		this.selectElement(event.target, xpath);
+		this.selectElement(event.target, this.xpath);
 	};
 
 	OliverHader_Mapping_Module.prototype.selectElement = function(element, xpath) {
