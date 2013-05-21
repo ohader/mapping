@@ -53,6 +53,15 @@
 	_margin: -1px 0 0 -1px;
 }
 
+.mapping-active .mapping-hover {
+	cursor: pointer;
+	-moz-box-shadow: 0 0 10px #138826 !important;
+	-webkit-box-shadow: 0 0 10px #138826 !important;
+	box-shadow: 0 0 10px #138826 !important;
+	_border:1px solid #138826 !important;
+	_margin: -1px 0 0 -1px !important;
+}
+
 .btn.mapping-element-add,
 .btn.mapping-structure-update {
 	display: none;

@@ -7,6 +7,7 @@
 				frameComponent: '#mapping-iframe-template',
 				xpathComponent: '#mapping-xpath-template',
 				selected: '.mapping-selected',
+				defined: '.mapping-defined',
 				addElementButton: '.btn.mapping-element-add',
 				loadStructureButton: '.btn.mapping-structure-load',
 				updateStructureButton: '.btn.mapping-structure-update',
@@ -17,7 +18,9 @@
 				frame: 'mapping-iframe-template'
 			},
 			cssClass: {
+				hover: 'mapping-hover',
 				selected: 'mapping-selected',
+				defined: 'mapping-defined',
 				element: 'mapping-element'
 			}
 		};
@@ -106,13 +109,12 @@
 	OliverHader_Mapping_Module.prototype.loadStructureCallback = function(structure) {
 		console.log(structure);
 
-		this.structure = structure;
-		this.loadTemplate(structure.uid);
-
 		this.xpath = '';
-		this.drawXPath();
-
+		this.structure = structure;
 		this.elements = structure.elements;
+
+		this.loadTemplate(structure.uid);
+		this.drawXPath();
 		this.drawElements();
 	};
 
@@ -133,6 +135,7 @@
 
 	OliverHader_Mapping_Module.prototype.initializeTemplate = function(event) {
 		this.frameComponent.contents().find('body').addClass('mapping-active').click($.proxy(this.handleMappingClick, this));
+		this.visualizeElements();
 	};
 
 	OliverHader_Mapping_Module.prototype.handleMappingClick = function(event) {
@@ -173,6 +176,7 @@
 		}
 
 		this.drawElements();
+		this.visualizeElements();
 	};
 
 	OliverHader_Mapping_Module.prototype.removeElementButtonClick = function(event) {
@@ -183,6 +187,7 @@
 		}
 
 		this.drawElements();
+		this.visualizeElements();
 	};
 
 	OliverHader_Mapping_Module.prototype.drawXPath = function() {
@@ -218,8 +223,26 @@
 			element.append($('<div></div>').append(scopeSelect));
 			element.data('xpath', xpath);
 
+			element.hover(
+				function() { self.getElement(xpath).addClass(self.options.cssClass.hover); },
+				function() { self.getElement(xpath).removeClass(self.options.cssClass.hover); }
+			)
+
 			self.elementsComponent.append(element);
 		});
+	};
+
+	OliverHader_Mapping_Module.prototype.visualizeElements = function(event) {
+		var self = this;
+		this.frameComponent.contents().find(this.options.selector.defined).removeClass(this.options.cssClass.defined);
+
+		$.each(this.elements, function(xpath, data) {
+			self.getElement(xpath).addClass(self.options.cssClass.defined);
+		});
+	};
+
+	OliverHader_Mapping_Module.prototype.getElement = function(xpath) {
+		return $.xpath(this.frameComponent.contents(), xpath);
 	};
 
 	OliverHader_Mapping_Module.prototype.elementNameChange = function(event) {
