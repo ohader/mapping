@@ -6,7 +6,7 @@ if (!defined('TYPO3_MODE')) {
 if (TYPO3_MODE === 'BE') {
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 		'OliverHader.' . $_EXTKEY,
-		'user',
+		'tools',
 		'mapping',
 		'',
 		array(
@@ -14,7 +14,7 @@ if (TYPO3_MODE === 'BE') {
 			'Structure' => 'load,html,create,update,delete',
 		),
 		array(
-			'access' => 'user,group',
+			'access' => 'admin',
 			'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.gif',
 			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xlf',
 		)
