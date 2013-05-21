@@ -9,7 +9,7 @@ $TCA['tx_mapping_domain_model_structure'] = array(
 		'showRecordFieldList' => 'title',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'title, template, elements'),
+		'1' => array('showitem' => 'title, template, heads, elements'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -37,9 +37,19 @@ $TCA['tx_mapping_domain_model_structure'] = array(
 				'maxitems' => 1,
 			),
 		),
+		'heads' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:mapping/Resources/Private/Language/locallang_db.xlf:tx_mapping_domain_model_structure.heads',
+			'config' => array(
+				'type' => 'text',
+				'rows' => 10,
+				'cols' => 30,
+				'eval' => 'trim'
+			),
+		),
 		'elements' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:mapping/Resources/Private/Language/locallang_db.xlf:tx_mapping_domain_model_structure.query',
+			'label' => 'LLL:EXT:mapping/Resources/Private/Language/locallang_db.xlf:tx_mapping_domain_model_structure.elements',
 			'config' => array(
 				'type' => 'text',
 				'rows' => 10,

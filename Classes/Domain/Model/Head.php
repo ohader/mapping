@@ -4,7 +4,7 @@ namespace OliverHader\Mapping\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Oliver Hader <oliver.hader@typo3.org>
+ *  (c) 2013 Oliver Hader <oliver.hader@typo3.org>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,82 +29,26 @@ namespace OliverHader\Mapping\Domain\Model;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class Structure extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class Head extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
 	 * @var string
 	 */
-	protected $title;
+	protected $xPath;
 
 	/**
-	 * @var string
+	 * @param string $xPath
 	 */
-	protected $template;
-
-	/**
-	 * @var string
-	 */
-	protected $heads;
-
-	/**
-	 * @var string
-	 */
-	protected $elements;
-
-	/**
-	 * @param string $title
-	 */
-	public function setTitle($title) {
-		$this->title = (string) $title;
+	public function setXPath($xPath) {
+		$this->xPath = (string) $xPath;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
-		return $this->title;
+	public function getXPath() {
+		return $this->xPath;
 	}
 
-	/**
-	 * @param string $template
-	 */
-	public function setTemplate($template) {
-		$this->template = (string) $template;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTemplate() {
-		return $this->template;
-	}
-
-	/**
-	 * @param string $heads
-	 */
-	public function setHeads($heads) {
-		$this->heads = (string) $heads;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getHeads() {
-		return $this->heads;
-	}
-
-	/**
-	 * @param string $elements
-	 */
-	public function setElements($elements) {
-		$this->elements = (string) $elements;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getElements() {
-		return $this->elements;
-	}
 }
 ?>

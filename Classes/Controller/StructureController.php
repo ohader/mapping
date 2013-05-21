@@ -41,6 +41,12 @@ class StructureController extends AbstractController {
 	protected $elementService;
 
 	/**
+	 * @var \OliverHader\Mapping\Service\HeadService
+	 * @inject
+	 */
+	protected $headService;
+
+	/**
 	 * @var \OliverHader\Mapping\Service\MarkupService
 	 * @inject
 	 */
@@ -54,6 +60,9 @@ class StructureController extends AbstractController {
 		$result = array(
 			'uid' => $structure->getUid(),
 			'title' => $structure->getTitle(),
+			'heads' => $this->headService->convertTypoScriptToArray(
+				$structure->getHeads()
+			),
 			'elements' => $this->elementService->convertTypoScriptToArray(
 				$structure->getElements()
 			),
@@ -87,13 +96,20 @@ class StructureController extends AbstractController {
 	/**
 	 * @param \OliverHader\Mapping\Domain\Model\Structure $structure
 	 * @param string $elements
+	 * @param string $heads
 	 * @return string
 	 * @dontverifyrequesthash
 	 */
-	public function updateAction(Structure $structure, $elements = NULL) {
+	public function updateAction(Structure $structure, $elements = NULL, $heads = NULL) {
 		if ($elements !== NULL) {
 			$structure->setElements(
 				$this->elementService->convertArrayToTypoScript(json_decode($elements, TRUE))
+			);
+		}
+
+		if ($heads !== NULL) {
+			$structure->setHeads(
+				$this->headService->convertArrayToTypoScript(json_decode($heads, TRUE))
 			);
 		}
 
@@ -128,6 +144,7 @@ class StructureController extends AbstractController {
 		$stylesheet->setAttribute('type', 'text/css');
 		$stylesheet->setAttribute('rel', 'stylesheet');
 		$stylesheet->setAttribute('href', $this->getResourceUri('Css/main.css'));
+		$stylesheet->setAttribute('data-mapping', 'added');
 
 		$head = $document->getElementsByTagName('head')->item(0);
 		$head->appendChild($stylesheet);

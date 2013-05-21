@@ -3,6 +3,7 @@
 		var defaults = {
 			selector: {
 				templateComponent: '#mapping-workspace-template',
+				headsComponent: '#mapping-workspace-heads',
 				elementsComponent: '#mapping-workspace-elements',
 				frameComponent: '#mapping-iframe-template',
 				xpathComponent: '#mapping-xpath-template',
@@ -12,7 +13,9 @@
 				loadStructureButton: '.btn.mapping-structure-load',
 				updateStructureButton: '.btn.mapping-structure-update',
 				structure: '.mapping-structure',
-				element: '.mapping-element'
+				element: '.mapping-element',
+				head: '.mapping-head',
+				heads: 'head > script, head > link, head > style'
 			},
 			identifier: {
 				frame: 'mapping-iframe-template'
@@ -28,9 +31,11 @@
 		this.xpath = '';
 		this.structure = null;
 		this.elements = {};
+		this.heads = {};
 		this.settings = settings || [];
 		this.options = $.extend({}, defaults, options);
 		this.templateComponent = $(this.options.selector.templateComponent);
+		this.headsComponent = $(this.options.selector.headsComponent);
 		this.elementsComponent = $(this.options.selector.elementsComponent);
 		this.xpathComponent = $(this.options.selector.xpathComponent);
 		this.frameComponent = null;
@@ -78,7 +83,8 @@
 			var data = {};
 			data[this.settings.arguments.prefix] = {
 				structure: this.structure.uid,
-				elements: JSON.stringify(this.elements)
+				elements: JSON.stringify(this.elements),
+				heads: JSON.stringify(this.heads)
 			};
 
 			$.ajax({
@@ -109,6 +115,7 @@
 	OliverHader_Mapping_Module.prototype.loadStructureCallback = function(structure) {
 		this.xpath = '';
 		this.structure = structure;
+		this.heads = structure.heads;
 		this.elements = structure.elements;
 
 		this.loadTemplate(structure.uid);
@@ -132,8 +139,29 @@
 	};
 
 	OliverHader_Mapping_Module.prototype.initializeTemplate = function(event) {
+		var self = this;
+
 		this.frameComponent.contents().find('body').addClass('mapping-active').click($.proxy(this.handleMappingClick, this));
 		this.visualizeElements();
+
+		this.headsComponent.empty();
+		this.frameComponent.contents().find(this.options.selector.heads).each(
+			function() { self.initializeHeadElement(this); }
+		);
+	};
+
+	OliverHader_Mapping_Module.prototype.initializeHeadElement = function(element) {
+		if ($(element).data('mapping') === 'added') {
+			return;
+		}
+
+		var xpath = XPathUtility.getElementXPath(element);
+		var domWrapper = $('<div></div>').append($(element.cloneNode(true)).empty());
+
+		var headElement = $('<div class="mapping-head"></div>').data('xpath', xpath);
+		headElement.append($('<span class="span1">').append($('<input type="checkbox">').attr('checked', this.heads[xpath]).change($.proxy(this.headChange, this))));
+		headElement.append($('<span>').append($('<pre>').text(domWrapper.html())));
+		this.headsComponent.append(headElement);
 	};
 
 	OliverHader_Mapping_Module.prototype.handleMappingClick = function(event) {
@@ -248,6 +276,21 @@
 
 	OliverHader_Mapping_Module.prototype.getElement = function(xpath) {
 		return $.xpath(this.frameComponent.contents(), xpath);
+	};
+
+	OliverHader_Mapping_Module.prototype.headChange = function(event) {
+		var element = $(event.target).parents(this.options.selector.head, this.options.selector.head);
+
+		if (element && element.data('xpath')) {
+			var enabled = $(event.target).is(':checked');
+			var xpath = element.data('xpath');
+
+			if (enabled && !this.heads[xpath]) {
+				this.heads[xpath] = true;
+			} else if (!enabled && this.heads[xpath]) {
+				delete(this.heads[xpath]);
+			}
+		}
 	};
 
 	OliverHader_Mapping_Module.prototype.elementNameChange = function(event) {

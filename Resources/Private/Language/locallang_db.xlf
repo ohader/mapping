@@ -12,6 +12,9 @@
 			<trans-unit id="tx_mapping_domain_model_structure.template" xml:space="preserve">
 				<source>Template</source>
 			</trans-unit>
+			<trans-unit id="tx_mapping_domain_model_structure.heads" xml:space="preserve">
+				<source>Heads</source>
+			</trans-unit>
 			<trans-unit id="tx_mapping_domain_model_structure.elements" xml:space="preserve">
 				<source>Elements</source>
 			</trans-unit>

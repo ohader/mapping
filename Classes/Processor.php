@@ -4,6 +4,7 @@ use OliverHader\Mapping\Domain\Model\Element;
 use OliverHader\Mapping\Domain\Model\Structure;
 use OliverHader\Mapping\Service\Variable\AbstractVariableService;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /***************************************************************
  *  Copyright notice
@@ -52,6 +53,12 @@ class Processor implements SingletonInterface {
 	protected $structureRepository;
 
 	/**
+	 * @var \OliverHader\Mapping\Service\HeadService
+	 * @inject
+	 */
+	protected $headService;
+
+	/**
 	 * @var \OliverHader\Mapping\Service\ElementService
 	 * @inject
 	 */
@@ -82,6 +89,7 @@ class Processor implements SingletonInterface {
 
 		$variableService = $this->getVariableService($renderAs);
 		$document = $this->markupService->getDomDocument($structure->getTemplate());
+		$heads = $this->headService->convertTypoScriptToObjects($structure->getHeads());
 		$elements = $this->elementService->convertTypoScriptToObjects($structure->getElements());
 		$xpath = new \DOMXPath($document);
 		// Register default namespace to blank (default)
@@ -89,11 +97,23 @@ class Processor implements SingletonInterface {
 			'ns', $document->documentElement->lookupNamespaceUri(NULL)
 		);
 
+		foreach ($heads as $head) {
+			$namespacePath = $this->getNamespaceXPath($head->getXPath(), 'ns');
+			$nodeList = $xpath->query($namespacePath);
+
+			if ($nodeList === FALSE || empty($nodeList->length)) {
+				continue;
+			}
+
+			$node = $nodeList->item(0);
+			$this->getFrontend()->getPageRenderer()->addHeaderData($document->saveHTML($node));
+		}
+
 		foreach ($elements as $element) {
 			$namespacePath = $this->getNamespaceXPath($element->getXPath(), 'ns');
 			$nodeList = $xpath->query($namespacePath);
 
-			if ($nodeList === FALSE) {
+			if ($nodeList === FALSE || empty($nodeList->length)) {
 				continue;
 			}
 
@@ -153,6 +173,13 @@ class Processor implements SingletonInterface {
 	protected function getVariableService($renderAs) {
 		$renderAs = lcfirst(strtolower($renderAs));
 		return $this->objectManager->get('OliverHader\\Mapping\\Service\\Variable\\' . $renderAs . 'VariableService');
+	}
+
+	/**
+	 * @return TypoScriptFrontendController
+	 */
+	protected function getFrontend() {
+		return $GLOBALS['TSFE'];
 	}
 
 }
