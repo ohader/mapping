@@ -1,5 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
+namespace OliverHader\Mapping\Service\TypoScript;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class HeadService implements SingletonInterface {
+abstract class AbstractService implements SingletonInterface {
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
@@ -45,79 +45,11 @@ class HeadService implements SingletonInterface {
 	 * @param string $data
 	 * @return array
 	 */
-	public function convertTypoScriptToArray($data) {
-		$heads = array();
-
-		$typoScript = $this->parseTypoScript($data);
-		foreach ($typoScript as $key => $value) {
-			if (substr($key, -1) === '.' && !empty($typoScript[$key]['xpath'])) {
-				$xpath = $typoScript[$key]['xpath'];
-				$heads[$xpath] = TRUE;
-			}
-		}
-
-		return $heads;
-	}
-
-	/**
-	 * @param array $data
-	 * @return string
-	 */
-	public function convertArrayToTypoScript(array $data) {
-		$heads = '';
-		$index = 0;
-
-		foreach ($data as $xpath => $value) {
-			if (empty($value)) {
-				continue;
-			}
-
-			$index++;
-			$name = $index * 10;
-
-			$heads .= $name . ' {' . PHP_EOL;
-			$heads .= "\t" . 'xpath = ' . $xpath . PHP_EOL;
-			$heads .= '}' . PHP_EOL . PHP_EOL;
-		}
-
-		return $heads;
-	}
-
-	/**
-	 * @param string $data
-	 * @return array|\OliverHader\Mapping\Domain\Model\Head[]
-	 */
-	public function convertTypoScriptToObjects($data) {
-		$heads = array();
-		$array = $this->convertTypoScriptToArray($data);
-
-		foreach ($array as $xpath => $item) {
-			$head = $this->createHead();
-			$head->setXPath($xpath);
-			$heads[] = $head;
-		}
-
-		return $heads;
-	}
-
-	/**
-	 * @param string $data
-	 * @return array
-	 */
 	protected function parseTypoScript($data) {
 		/** @var $parser TypoScriptParser */
 		$parser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
 		$parser->parse($data);
 		return (array) $parser->setup;
-	}
-
-	/**
-	 * @return \OliverHader\Mapping\Domain\Model\Head
-	 */
-	protected function createHead() {
-		return $this->objectManager->get(
-			'OliverHader\Mapping\Domain\Model\Head'
-		);
 	}
 
 }

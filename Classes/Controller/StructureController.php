@@ -35,13 +35,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class StructureController extends AbstractController {
 
 	/**
-	 * @var \OliverHader\Mapping\Service\ElementService
+	 * @var \OliverHader\Mapping\Service\TypoScript\ElementService
 	 * @inject
 	 */
 	protected $elementService;
 
 	/**
-	 * @var \OliverHader\Mapping\Service\HeadService
+	 * @var \OliverHader\Mapping\Service\TypoScript\HeadService
 	 * @inject
 	 */
 	protected $headService;

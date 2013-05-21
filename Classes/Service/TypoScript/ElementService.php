@@ -1,7 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+namespace OliverHader\Mapping\Service\TypoScript;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /***************************************************************
@@ -33,13 +31,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class ElementService implements SingletonInterface {
-
-	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-	 * @inject
-	 */
-	protected $objectManager;
+class ElementService extends AbstractService {
 
 	/**
 	 * @param string $data
@@ -110,17 +102,6 @@ class ElementService implements SingletonInterface {
 		}
 
 		return $elements;
-	}
-
-	/**
-	 * @param string $data
-	 * @return array
-	 */
-	protected function parseTypoScript($data) {
-		/** @var $parser TypoScriptParser */
-		$parser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
-		$parser->parse($data);
-		return (array) $parser->setup;
 	}
 
 	/**

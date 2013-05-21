@@ -53,13 +53,13 @@ class Processor implements SingletonInterface {
 	protected $structureRepository;
 
 	/**
-	 * @var \OliverHader\Mapping\Service\HeadService
+	 * @var \OliverHader\Mapping\Service\TypoScript\HeadService
 	 * @inject
 	 */
 	protected $headService;
 
 	/**
-	 * @var \OliverHader\Mapping\Service\ElementService
+	 * @var \OliverHader\Mapping\Service\TypoScript\ElementService
 	 * @inject
 	 */
 	protected $elementService;
