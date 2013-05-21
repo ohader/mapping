@@ -113,7 +113,18 @@ class Processor implements SingletonInterface {
 			}
 		}
 
-		return $document->saveHTML();
+		return $this->getInnerHtml(
+			$document->getElementsByTagName('body')->item(0)
+		);
+	}
+
+	protected function getInnerHtml(\DOMNode $node) {
+		$innerHtml = '';
+		/** @var $childNode \DOMNode */
+		foreach ($node->childNodes as $childNode) {
+			$innerHtml .= $childNode->ownerDocument->saveHTML($childNode);
+		}
+		return $innerHtml;
 	}
 
 	/**
