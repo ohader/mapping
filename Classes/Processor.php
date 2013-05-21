@@ -90,9 +90,8 @@ class Processor implements SingletonInterface {
 		);
 
 		foreach ($elements as $element) {
-			$nodeList = $xpath->query(
-				$this->getNamespaceXPath($element->getXPath(), 'ns')
-			);
+			$namespacePath = $this->getNamespaceXPath($element->getXPath(), 'ns');
+			$nodeList = $xpath->query($namespacePath);
 
 			if ($nodeList === FALSE) {
 				continue;
@@ -126,7 +125,7 @@ class Processor implements SingletonInterface {
 		$items = explode('/', $value);
 
 		foreach ($items as $index => &$item) {
-			if ($index === 0) {
+			if ($index === 0 || empty($item) || strpos($item, '*') === 0) {
 				continue;
 			}
 

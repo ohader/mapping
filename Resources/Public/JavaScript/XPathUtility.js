@@ -21,7 +21,8 @@ XPathUtility = {
 			}
 
 			var tagName = element.localName.toLowerCase();
-			var pathIndex = (index ? "[" + (index+1) + "]" : "");
+			// Always add XPath element index
+			var pathIndex = "[" + (index+1) + "]";
 			paths.splice(0, 0, tagName + pathIndex);
 		}
 
