@@ -141,15 +141,18 @@
 	OliverHader_Mapping_Module.prototype.handleMappingClick = function(event) {
 		event.preventDefault();
 
-		var self = this, element;
-
 		this.xpath = XPathUtility.getElementXPath(event.target);
-		element = event.target;
+		this.selectElement(event.target, xpath);
+	};
 
+	OliverHader_Mapping_Module.prototype.selectElement = function(element, xpath) {
 		this.frameComponent.contents().find(this.options.selector.selected).removeClass(this.options.cssClass.selected);
 		$(element).addClass(this.options.cssClass.selected);
 
-		this.drawXPath();
+		if (xpath) {
+			this.xpath = xpath;
+			this.drawXPath();
+		}
 	};
 
 	OliverHader_Mapping_Module.prototype.addXPathButton = function(value, xpath) {
@@ -164,7 +167,8 @@
 
 	OliverHader_Mapping_Module.prototype.handleXPathClick = function(event) {
 		var element = $(event.target);
-		console.log(element.data('xpath'));
+		var xpath = element.data('xpath');
+		this.selectElement(this.getElement(xpath));
 	};
 
 	OliverHader_Mapping_Module.prototype.addElementButtonClick = function(event) {
@@ -223,12 +227,15 @@
 			element.append($('<div></div>').append(scopeSelect));
 			element.data('xpath', xpath);
 
+			self.elementsComponent.append(element);
+
+			element.click(
+				function() { self.selectElement(self.getElement(xpath), xpath); }
+			);
 			element.hover(
 				function() { self.getElement(xpath).addClass(self.options.cssClass.hover); },
 				function() { self.getElement(xpath).removeClass(self.options.cssClass.hover); }
-			)
-
-			self.elementsComponent.append(element);
+			);
 		});
 	};
 
