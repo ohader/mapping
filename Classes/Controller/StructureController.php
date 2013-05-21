@@ -35,7 +35,18 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class StructureController extends AbstractController {
 
 	/**
-	 * http://ip61.local/typo3/mod.php?M=user_MappingMapping&tx_mapping_user_mappingmapping%5Baction%5D=load&tx_mapping_user_mappingmapping%5Bcontroller%5D=Structure&tx_mapping_user_mappingmapping%5Bstructure%5D=1
+	 * @var \OliverHader\Mapping\Service\ElementService
+	 * @inject
+	 */
+	protected $elementService;
+
+	/**
+	 * @var \OliverHader\Mapping\Service\MarkupService
+	 * @inject
+	 */
+	protected $markupService;
+
+	/**
 	 * @param \OliverHader\Mapping\Domain\Model\Structure $structure
 	 * @return string
 	 */
@@ -43,7 +54,7 @@ class StructureController extends AbstractController {
 		$result = array(
 			'uid' => $structure->getUid(),
 			'title' => $structure->getTitle(),
-			'elements' => $this->convertElementsToArray(
+			'elements' => $this->elementService->convertTypoScriptToArray(
 				$structure->getElements()
 			),
 		);
@@ -82,7 +93,7 @@ class StructureController extends AbstractController {
 	public function updateAction(Structure $structure, $elements = NULL) {
 		if ($elements !== NULL) {
 			$structure->setElements(
-				$this->convertElementsToTypoScript(json_decode($elements, TRUE))
+				$this->elementService->convertArrayToTypoScript(json_decode($elements, TRUE))
 			);
 		}
 
@@ -105,40 +116,14 @@ class StructureController extends AbstractController {
 	}
 
 	/**
-	 * @param string $file
+	 * @param string $fileName
 	 * @return string
 	 */
-	protected function getHtml($file) {
-		$filePath = GeneralUtility::getFileAbsFileName($file);
+	protected function getHtml($fileName) {
+		/** @var $document \DOMDocument */
+		$document = $this->markupService->getDomDocument($fileName);
 
-		$document = new \DOMDocument();
-		$document->load($filePath);
-
-		/** @var $stylesheet \DOMNode */
-		foreach ($document->getElementsByTagName('link') as $stylesheet) {
-			$isStylesheet = (
-				$stylesheet->attributes->getNamedItem('rel') &&
-				$stylesheet->attributes->getNamedItem('href') &&
-				$stylesheet->attributes->getNamedItem('rel')->nodeValue === 'stylesheet'
-			);
-
-			if ($isStylesheet) {
-				$href = $stylesheet->attributes->getNamedItem('href')->nodeValue;
-				if (preg_match('#^([a-z]+:/)?/#i', $href)) {
-					continue;
-				}
-
-				$uri = dirname($filePath) . '/' . $href;
-				$uri = substr($uri, strlen(PATH_site));
-
-				if (TYPO3_MODE === 'BE' && $uri !== FALSE) {
-					$uri = '../' . $uri;
-				}
-
-				$stylesheet->attributes->getNamedItem('href')->nodeValue = $uri;
-			}
-		}
-
+		/** @var $stylesheet \DOMElement */
 		$stylesheet = $document->createElement('link');
 		$stylesheet->setAttribute('type', 'text/css');
 		$stylesheet->setAttribute('rel', 'stylesheet');
@@ -150,57 +135,6 @@ class StructureController extends AbstractController {
 		$content = $document->saveHTML();
 
 		return $content;
-	}
-
-	protected function convertElementsToTypoScript(array $data) {
-		$elements = '';
-
-		foreach ($data as $xpath => $value) {
-			if (empty($value['name']) || empty($value['scope'])) {
-				continue;
-			}
-
-			$elements .= $value['name'] . ' {' . PHP_EOL;
-			$elements .= "\t" . 'xpath = ' . $xpath . PHP_EOL;
-			$elements .= "\t" . 'scope = ' . $value['scope'] . PHP_EOL;
-			$elements .= '}' . PHP_EOL . PHP_EOL;
-		}
-
-		return $elements;
-	}
-
-	protected function convertElementsToArray($data) {
-		$elements = array();
-
-		$typoScript = $this->parseTypoScript($data);
-		foreach ($typoScript as $key => $value) {
-			if (substr($key, -1) === '.' && !empty($typoScript[$key]['xpath'])) {
-				$name = substr($key, 0, -1);
-				$xpath = $typoScript[$key]['xpath'];
-
-				if (!empty($typoScript[$key]['scope'])) {
-					$scope = $typoScript[$key]['scope'];
-				}
-
-				if (empty($scope) || !GeneralUtility::inList('inner,outer', $scope)) {
-					$scope = 'inner';
-				}
-
-				$elements[$xpath] = array(
-					'name' => $name,
-					'scope' => $scope,
-				);
-			}
-		}
-
-		return $elements;
-	}
-
-	protected function parseTypoScript($data) {
-		/** @var $parser TypoScriptParser */
-		$parser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
-		$parser->parse($data);
-		return (array) $parser->setup;
 	}
 
 }
