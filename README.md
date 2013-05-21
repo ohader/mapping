@@ -63,3 +63,11 @@ This is the TypoScript reference for the **MAPPING** content object.
 		<td>Defines how variables are substituted. Can be <em>fluid</em> or <em>marker</em></td>
 	</tr>
 </table>
+
+How does it look like?
+----------------------
+
+This is the backend module that is used to determine accordant DOM elements and create a
+mapping structure. The user interface is still target to be changed further.
+
+![Mapping module in the backend](/Documentation/screenshot.png "Mapping module in the backend")
