@@ -51,7 +51,11 @@ class MarkupService implements SingletonInterface {
 		$directoryPath = dirname($filePath);
 
 		$document = new \DOMDocument();
-		$document->load($filePath);
+		$success = $document->loadHTML(file_get_contents($filePath));
+
+		if ($success === FALSE) {
+			throw new \RuntimeException('Template cannot be loaded from ' . $filePath);
+		}
 
 		$xpath = new \DOMXPath($document);
 
