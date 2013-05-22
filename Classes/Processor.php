@@ -171,7 +171,7 @@ class Processor implements SingletonInterface {
 	 * @return AbstractVariableService
 	 */
 	protected function getVariableService($renderAs) {
-		$renderAs = lcfirst(strtolower($renderAs));
+		$renderAs = ucfirst(strtolower($renderAs));
 		return $this->objectManager->get('OliverHader\\Mapping\\Service\\Variable\\' . $renderAs . 'VariableService');
 	}
 
