@@ -89,16 +89,21 @@ class Processor implements SingletonInterface {
 
 		$variableService = $this->getVariableService($renderAs);
 		$document = $this->markupService->getDomDocument($structure->getTemplate());
+		$defaultNamespace = $document->documentElement->lookupNamespaceUri(NULL);
 		$heads = $this->headService->convertTypoScriptToObjects($structure->getHeads());
 		$elements = $this->elementService->convertTypoScriptToObjects($structure->getElements());
+
 		$xpath = new \DOMXPath($document);
 		// Register default namespace to blank (default)
-		$xpath->registerNamespace(
-			'ns', $document->documentElement->lookupNamespaceUri(NULL)
-		);
+		if (!empty($defaultNamespace)) {
+			$xpath->registerNamespace('ns', $defaultNamespace);
+		}
 
 		foreach ($heads as $head) {
-			$namespacePath = $this->getNamespaceXPath($head->getXPath(), 'ns');
+			$namespacePath = $head->getXPath();
+			if (!empty($defaultNamespace)) {
+				$namespacePath = $this->getNamespaceXPath($namespacePath, 'ns');
+			}
 			$nodeList = $xpath->query($namespacePath);
 
 			if ($nodeList === FALSE || empty($nodeList->length)) {
@@ -110,7 +115,10 @@ class Processor implements SingletonInterface {
 		}
 
 		foreach ($elements as $element) {
-			$namespacePath = $this->getNamespaceXPath($element->getXPath(), 'ns');
+			$namespacePath = $element->getXPath();
+			if (!empty($defaultNamespace)) {
+				$namespacePath = $this->getNamespaceXPath($namespacePath, 'ns');
+			}
 			$nodeList = $xpath->query($namespacePath);
 
 			if ($nodeList === FALSE || empty($nodeList->length)) {
