@@ -118,6 +118,14 @@
 		this.heads = structure.heads;
 		this.elements = structure.elements;
 
+		if (typeof this.heads === 'object' && this.heads instanceof Array) {
+			this.heads = {};
+		}
+
+		if (typeof this.elements === 'object' && this.elements instanceof Array) {
+			this.elements = {};
+		}
+
 		this.loadTemplate(structure.uid);
 		this.drawXPath();
 		this.drawElements();
