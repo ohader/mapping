@@ -45,6 +45,7 @@ class MarkupService implements SingletonInterface {
 	/**
 	 * @param string $fileName
 	 * @return \DOMDocument
+	 * @throws \RuntimeException
 	 */
 	public function getDomDocument($fileName) {
 		$filePath = GeneralUtility::getFileAbsFileName($fileName);

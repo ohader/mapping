@@ -53,16 +53,10 @@ class Processor implements SingletonInterface {
 	protected $structureRepository;
 
 	/**
-	 * @var \OliverHader\Mapping\Service\TypoScript\HeadService
+	 * @var \OliverHader\Mapping\Service\StructureService
 	 * @inject
 	 */
-	protected $headService;
-
-	/**
-	 * @var \OliverHader\Mapping\Service\TypoScript\ElementService
-	 * @inject
-	 */
-	protected $elementService;
+	protected $structureService;
 
 	/**
 	 * @var \OliverHader\Mapping\Service\MarkupService
@@ -90,8 +84,8 @@ class Processor implements SingletonInterface {
 		$variableService = $this->getVariableService($renderAs);
 		$document = $this->markupService->getDomDocument($structure->getTemplate());
 		$defaultNamespace = $document->documentElement->lookupNamespaceUri(NULL);
-		$heads = $this->headService->convertTypoScriptToObjects($structure->getHeads());
-		$elements = $this->elementService->convertTypoScriptToObjects($structure->getElements());
+		$heads = $this->structureService->getHeads($structure);
+		$elements = $this->structureService->getElements($structure);
 
 		$xpath = new \DOMXPath($document);
 		// Register default namespace to blank (default)
