@@ -1,5 +1,6 @@
 <?php
 namespace OliverHader\Mapping\Utility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /***************************************************************
  *  Copyright notice
@@ -31,6 +32,46 @@ namespace OliverHader\Mapping\Utility;
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
 class GeneralUtility {
+
+	/**
+	 * @param string $name
+	 * @param string $tableName
+	 * @param string $fieldName
+	 * @throws \RuntimeException
+	 */
+	static public function registerAssignmentHandler($name, $tableName, $fieldName = 'assignments') {
+		if (!empty($GLOBALS['TCA'][$tableName]['columns'][$fieldName])) {
+			throw new \RuntimeException(
+				'Field ' . $tableName . '.' . $fieldName . ' is already defined'
+			);
+		}
+
+		$columns = array(
+			$fieldName => array(
+				'exclude' => 0,
+				'label' => 'LLL:EXT:mapping/Resources/Private/Language/locallang_db.xlf:common.assignments',
+				'config' => array(
+					'type' => 'text',
+					'rows' => 10,
+					'cols' => 30,
+					'eval' => 'trim'
+				),
+			),
+		);
+
+		ExtensionManagementUtility::addTCAcolumns($tableName, $columns);
+		ExtensionManagementUtility::addToAllTCAtypes($tableName, $fieldName);
+		self::getConfigurationService()->setAssignmentHandler($name, $tableName, $fieldName);
+	}
+
+	/**
+	 * @return \OliverHader\Mapping\Service\ConfigurationService
+	 */
+	static public function getConfigurationService() {
+		return self::getObjectManager()->get(
+			'OliverHader\\Mapping\\Service\\ConfigurationService'
+		);
+	}
 
 	/**
 	 * @return \TYPO3\CMS\Extbase\Object\ObjectManager

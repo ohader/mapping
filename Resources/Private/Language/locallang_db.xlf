@@ -21,6 +21,10 @@
 			<trans-unit id="tx_mapping_domain_model_structure.elements" xml:space="preserve">
 				<source>Elements</source>
 			</trans-unit>
+
+			<trans-unit id="common.assignments" xml:space="preserve">
+				<source>Assignments</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

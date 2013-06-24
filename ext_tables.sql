@@ -19,3 +19,17 @@ CREATE TABLE tx_mapping_domain_model_structure (
 	PRIMARY KEY (uid),
 	KEY parent (pid)
 );
+
+#
+# Table structure for table 'backend_layout'
+#
+CREATE TABLE backend_layout (
+	assignments mediumtext
+);
+
+#
+# Table structure for table 'tx_dce_domain_model_dce'
+#
+CREATE TABLE tx_dce_domain_model_dce (
+	assignments mediumtext
+);
