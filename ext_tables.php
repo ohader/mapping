@@ -12,6 +12,9 @@ if (TYPO3_MODE === 'BE') {
 		array(
 			'Module' => 'index,data',
 			'Structure' => 'load,html,create,update,delete',
+			// FormEngine.index action shows error since this controller
+			// may not be used in regular module context
+			'FormEngine' => 'index',
 		),
 		array(
 			'access' => 'admin',

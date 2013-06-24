@@ -51,10 +51,12 @@ class GeneralUtility {
 				'exclude' => 0,
 				'label' => 'LLL:EXT:mapping/Resources/Private/Language/locallang_db.xlf:common.assignments',
 				'config' => array(
-					'type' => 'text',
-					'rows' => 10,
-					'cols' => 30,
-					'eval' => 'trim'
+					'type' => 'user',
+					'userFunc' => 'OliverHader\\Mapping\\Service\\FormEngineService->dispatch',
+					'parameters' => array(
+						'controllerName' => 'FormEngine',
+						'actionName' => 'assignment',
+					),
 				),
 			),
 		);
