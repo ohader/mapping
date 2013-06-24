@@ -72,6 +72,25 @@ class MarkupService implements SingletonInterface {
 	}
 
 	/**
+	 * @param string $value
+	 * @param string $namespace
+	 * @return string
+	 */
+	public function getNamespaceXPath($value, $namespace) {
+		$items = explode('/', $value);
+
+		foreach ($items as $index => &$item) {
+			if ($index === 0 || empty($item) || strpos($item, '*') === 0) {
+				continue;
+			}
+
+			$item = $namespace . ':' . $item;
+		}
+
+		return implode('/', $items);
+	}
+
+	/**
 	 * @param string $directoryPath
 	 * @param \DOMAttr $attribute
 	 */

@@ -96,7 +96,7 @@ class Processor implements SingletonInterface {
 		foreach ($heads as $head) {
 			$namespacePath = $head->getXPath();
 			if (!empty($defaultNamespace)) {
-				$namespacePath = $this->getNamespaceXPath($namespacePath, 'ns');
+				$namespacePath = $this->markupService->getNamespaceXPath($namespacePath, 'ns');
 			}
 			$nodeList = $xpath->query($namespacePath);
 
@@ -111,7 +111,7 @@ class Processor implements SingletonInterface {
 		foreach ($elements as $element) {
 			$namespacePath = $element->getXPath();
 			if (!empty($defaultNamespace)) {
-				$namespacePath = $this->getNamespaceXPath($namespacePath, 'ns');
+				$namespacePath = $this->markupService->getNamespaceXPath($namespacePath, 'ns');
 			}
 			$nodeList = $xpath->query($namespacePath);
 
@@ -147,25 +147,6 @@ class Processor implements SingletonInterface {
 			$innerHtml .= $childNode->ownerDocument->saveHTML($childNode);
 		}
 		return $innerHtml;
-	}
-
-	/**
-	 * @param string $value
-	 * @param string $namespace
-	 * @return string
-	 */
-	protected function getNamespaceXPath($value, $namespace) {
-		$items = explode('/', $value);
-
-		foreach ($items as $index => &$item) {
-			if ($index === 0 || empty($item) || strpos($item, '*') === 0) {
-				continue;
-			}
-
-			$item = $namespace . ':' . $item;
-		}
-
-		return implode('/', $items);
 	}
 
 	/**
