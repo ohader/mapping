@@ -32,6 +32,12 @@ namespace OliverHader\Mapping\Controller;
 class FormEngineController extends AbstractController {
 
 	/**
+	 * @var \OliverHader\Mapping\Service\StructureService
+	 * @inject
+	 */
+	protected $structureService;
+
+	/**
 	 * @return string
 	 */
 	public function indexAction() {
@@ -42,7 +48,61 @@ class FormEngineController extends AbstractController {
 	 * @return void
 	 */
 	public function assignmentAction() {
+		$tableName = $this->settings['FormEngine']['tableName'];
+		$record = $this->settings['FormEngine']['record'];
 
+		$dataProvider = \OliverHader\Mapping\Assignment\AbstractDataProvider::create($tableName);
+
+		$data = array(
+			'structures' => $this->getDataStructures(),
+			'nodes' => $dataProvider->getNodes($record),
+		);
+
+		$this->view->assign('data', $data);
+	}
+
+	protected function getDataStructures() {
+		$dataStructures = array();
+
+		/** @var $structure \OliverHader\Mapping\Domain\Model\Structure */
+		foreach ($this->structureRepository->findAll() as $structure) {
+			$dataStructure = array(
+				'identifier' => $structure->getUid(),
+				'title' => $structure->getTitle(),
+				'elements' => array(),
+				'contexts' => array(
+					'all' => array(
+						'name' => 'all',
+						'elements' => array(),
+					),
+					'body' => array(
+						'name' => 'body',
+						'elements' => array(),
+					),
+				),
+			);
+
+			foreach ($this->structureService->getElements($structure) as $element) {
+				$dataStructure['elements'][] = $element->getName();
+				$dataStructure['contexts']['all']['elements'][] = $element->getName();
+				$dataStructure['contexts']['body']['elements'][] = $element->getName();
+			}
+
+			foreach ($this->structureService->getContexts($structure) as $context) {
+				$dataStructure['contexts'][$context->getName()] = array(
+					'name' => $context->getName(),
+					'elements' => array(),
+				);
+
+				foreach ($this->structureService->getElementsPerContext($structure, $context) as $element) {
+					$dataStructure['contexts'][$context->getName()]['elements'][] = $element->getName();
+				}
+			}
+
+			$dataStructures[$structure->getUid()] = $dataStructure;
+		}
+
+		return $dataStructures;
 	}
 
 }

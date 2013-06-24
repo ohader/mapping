@@ -1,5 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
+namespace OliverHader\Mapping\Assignment;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /***************************************************************
@@ -31,32 +31,36 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class ConfigurationService implements SingletonInterface {
+abstract class AbstractDataProvider implements SingletonInterface {
 
 	/**
-	 * @var array
-	 */
-	protected $assignmentHandlers = array();
-
-	/**
-	 * @param string $name
 	 * @param string $tableName
-	 * @param string $fieldName
+	 * @return DataProviderInterface
+	 * @throws InvalidDataProviderException
 	 */
-	public function setAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
-		$this->assignmentHandlers[$tableName] = array(
-			'name' => $name,
-			'tableName' => $tableName,
-			'fieldName' => $fieldName,
-			'dataProvider' => $dataProvider,
-		);
+	static public function create($tableName) {
+		$dataProvider = NULL;
+		$assignmentHandlers = \OliverHader\Mapping\Utility\GeneralUtility::getConfigurationService()->getAssignmentHandlers();
+
+		if (!empty($assignmentHandlers[$tableName]['dataProvider'])) {
+			/** @var $dataProvider DataProviderInterface */
+			$dataProvider = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($assignmentHandlers[$tableName]['dataProvider']);
+		}
+
+		if (empty($dataProvider) || !$dataProvider instanceof DataProviderInterface) {
+			throw new InvalidDataProviderException(
+				'No valid data provider for table "' . $tableName . '" found.'
+			);
+		}
+
+		return $dataProvider;
 	}
 
 	/**
-	 * @return array
+	 * @return \TYPO3\CMS\Lang\LanguageService
 	 */
-	public function getAssignmentHandlers() {
-		return $this->assignmentHandlers;
+	protected function getLanguageService() {
+		return $GLOBALS['LANG'];
 	}
 
 }

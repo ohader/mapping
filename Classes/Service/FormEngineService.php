@@ -54,6 +54,7 @@ class FormEngineService implements SingletonInterface {
 					'parameters' => $parameters,
 					'elementLabel' => $parameterArray['label'],
 					'elementName' => $parameterArray['itemFormElName'],
+					'elementValue' => $parameterArray['itemFormElValue'],
 					'elementId' => $parameterArray['itemFormElID'],
 					'tableName' => $parameterArray['table'],
 					'fieldName' => $parameterArray['field'],

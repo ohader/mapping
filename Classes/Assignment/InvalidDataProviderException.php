@@ -1,6 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
-use TYPO3\CMS\Core\SingletonInterface;
+namespace OliverHader\Mapping\Assignment;
 
 /***************************************************************
  *  Copyright notice
@@ -31,33 +30,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class ConfigurationService implements SingletonInterface {
-
-	/**
-	 * @var array
-	 */
-	protected $assignmentHandlers = array();
-
-	/**
-	 * @param string $name
-	 * @param string $tableName
-	 * @param string $fieldName
-	 */
-	public function setAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
-		$this->assignmentHandlers[$tableName] = array(
-			'name' => $name,
-			'tableName' => $tableName,
-			'fieldName' => $fieldName,
-			'dataProvider' => $dataProvider,
-		);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getAssignmentHandlers() {
-		return $this->assignmentHandlers;
-	}
+class InvalidDataProviderException extends \RuntimeException {
 
 }
 ?>

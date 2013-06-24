@@ -1,5 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
+namespace OliverHader\Mapping\Assignment;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /***************************************************************
@@ -31,32 +31,15 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class ConfigurationService implements SingletonInterface {
+class BackendLayoutDataProvider extends AbstractDataProvider implements DataProviderInterface {
 
 	/**
-	 * @var array
-	 */
-	protected $assignmentHandlers = array();
-
-	/**
-	 * @param string $name
-	 * @param string $tableName
-	 * @param string $fieldName
-	 */
-	public function setAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
-		$this->assignmentHandlers[$tableName] = array(
-			'name' => $name,
-			'tableName' => $tableName,
-			'fieldName' => $fieldName,
-			'dataProvider' => $dataProvider,
-		);
-	}
-
-	/**
+	 * @param array $record
 	 * @return array
 	 */
-	public function getAssignmentHandlers() {
-		return $this->assignmentHandlers;
+	public function getNodes(array $record) {
+		$nodes = array();
+		return $nodes;
 	}
 
 }

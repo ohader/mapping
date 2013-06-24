@@ -40,6 +40,17 @@ $TCA['tx_mapping_domain_model_structure'] = array(
 	),
 );
 
-\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler('Backend Layout', 'backend_layout');
-\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler('Backend Layout', 'tx_dce_domain_model_dce');
+\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler(
+	'Backend Layout',
+	'backend_layout',
+	'assignments',
+	'OliverHader\\Mapping\\Assignment\\BackendLayoutDataProvider'
+);
+
+\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler(
+	'Dynamic Content Element',
+	'tx_dce_domain_model_dce',
+	'assignments',
+	'OliverHader\\Mapping\\Assignment\\DceDataProvider'
+);
 ?>

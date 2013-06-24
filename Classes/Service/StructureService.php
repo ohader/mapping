@@ -2,7 +2,7 @@
 namespace OliverHader\Mapping\Service;
 use TYPO3\CMS\Core\SingletonInterface;
 use OliverHader\Mapping\Domain\Model\Structure;
-
+use OliverHader\Mapping\Domain\Model\Context;
 /***************************************************************
  *  Copyright notice
  *
@@ -53,6 +53,12 @@ class StructureService implements SingletonInterface {
 	protected $elementService;
 
 	/**
+	 * @var \OliverHader\Mapping\Service\MarkupService
+	 * @inject
+	 */
+	protected $markupService;
+
+	/**
 	 * @param Structure $structure
 	 * @return array|\OliverHader\Mapping\Domain\Model\Context[]
 	 */
@@ -74,6 +80,54 @@ class StructureService implements SingletonInterface {
 	 */
 	public function getElements(Structure $structure) {
 		return $this->elementService->convertTypoScriptToObjects($structure->getElements());
+	}
+
+	/**
+	 * @param Structure $structure
+	 * @param Context $context
+	 * @return array|\OliverHader\Mapping\Domain\Model\Element[]
+	 */
+	public function getElementsPerContext(Structure $structure, Context $context) {
+		$elementsPerContext = array();
+
+		$document = $this->markupService->getDomDocument($structure->getTemplate());
+		$defaultNamespace = $document->documentElement->lookupNamespaceUri(NULL);
+
+		$xpath = new \DOMXPath($document);
+		// Register default namespace to blank (default)
+		if (!empty($defaultNamespace)) {
+			$xpath->registerNamespace('ns', $defaultNamespace);
+		}
+
+		$elements = $this->getElements($structure);
+
+		$contextXPath = $context->getXPath();
+		if (!empty($defaultNamespace)) {
+			$contextXPath = $this->markupService->getNamespaceXPath($contextXPath, 'ns');
+		}
+		$nodeList = $xpath->query($contextXPath);
+
+		if ($nodeList === FALSE || empty($nodeList->length)) {
+			return $elementsPerContext;
+		}
+
+		$contextNode = $nodeList->item(0);
+
+		foreach ($elements as $element) {
+			$elementXPath = $element->getXPath();
+			if (!empty($defaultNamespace)) {
+				$elementXPath = $this->markupService->getNamespaceXPath($elementXPath, 'ns');
+			}
+			$nodeList = $xpath->query($elementXPath, $contextNode);
+
+			if ($nodeList === FALSE || empty($nodeList->length)) {
+				continue;
+			}
+
+			$elementsPerContext[] = $element;
+		}
+
+		return $elementsPerContext;
 	}
 
 }

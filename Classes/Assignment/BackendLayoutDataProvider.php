@@ -1,5 +1,5 @@
 <?php
-namespace OliverHader\Mapping\Service;
+namespace OliverHader\Mapping\Assignment;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /***************************************************************
@@ -31,32 +31,50 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class ConfigurationService implements SingletonInterface {
+class BackendLayoutDataProvider extends AbstractDataProvider implements DataProviderInterface {
 
 	/**
-	 * @var array
+	 * @param array $record
+	 * @return array
 	 */
-	protected $assignmentHandlers = array();
+	public function getNodes(array $record) {
+		$nodes = array();
 
-	/**
-	 * @param string $name
-	 * @param string $tableName
-	 * @param string $fieldName
-	 */
-	public function setAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
-		$this->assignmentHandlers[$tableName] = array(
-			'name' => $name,
-			'tableName' => $tableName,
-			'fieldName' => $fieldName,
-			'dataProvider' => $dataProvider,
-		);
+		$typoScript = $this->parseTypoScript($record['config']);
+		if (empty($typoScript['backend_layout.']['rows.'])) {
+			return $nodes;
+		}
+
+		foreach ($typoScript['backend_layout.']['rows.'] as $row) {
+			if (!empty($row['columns.'])) {
+				foreach ($row['columns.'] as $column) {
+					$colPos = $column['colPos'];
+					$name = $column['name'];
+
+					if (\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($name, 'LLL:')) {
+						$name = $this->getLanguageService()->sL($name);
+					}
+
+					$nodes[$colPos] = array(
+						'identifier' => $colPos,
+						'name' => $name . ' (colPos: ' . $colPos . ')',
+					);
+				}
+			}
+		}
+
+		return $nodes;
 	}
 
 	/**
+	 * @param string $data
 	 * @return array
 	 */
-	public function getAssignmentHandlers() {
-		return $this->assignmentHandlers;
+	protected function parseTypoScript($data) {
+		/** @var $parser \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser */
+		$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
+		$parser->parse($data);
+		return (array) $parser->setup;
 	}
 
 }

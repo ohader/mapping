@@ -1,0 +1,14 @@
+{namespace mapping=OliverHader\Mapping\ViewHelpers}
+
+<mapping:be.block
+	pageTitle="Templates"
+    loadJQuery="1"
+	addCssFiles="{
+		99:'{f:uri.resource(path:\'Css/main.css\')}'
+	}"
+	addJsFiles="{
+		99:'{f:uri.resource(path:\'JavaScript/Assignment.js\')}'
+	}">
+
+	<f:render section="Content" />
+</mapping:be.block>
