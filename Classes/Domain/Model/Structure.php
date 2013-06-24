@@ -44,6 +44,11 @@ class Structure extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @var string
 	 */
+	protected $contexts;
+
+	/**
+	 * @var string
+	 */
 	protected $heads;
 
 	/**
@@ -77,6 +82,20 @@ class Structure extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 */
 	public function getTemplate() {
 		return $this->template;
+	}
+
+	/**
+	 * @param string $contexts
+	 */
+	public function setContexts($contexts) {
+		$this->contexts = (string) $contexts;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getContexts() {
+		return $this->contexts;
 	}
 
 	/**

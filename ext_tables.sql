@@ -7,6 +7,7 @@ CREATE TABLE tx_mapping_domain_model_structure (
 
 	title varchar(255) NOT NULL default '',
 	template varchar(255) NOT NULL default '',
+	contexts mediumtext,
 	heads mediumtext,
 	elements mediumtext,
 
