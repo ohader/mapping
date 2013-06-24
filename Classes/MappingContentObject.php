@@ -1,6 +1,6 @@
 <?php
 namespace OliverHader\Mapping;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use OliverHader\Mapping\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /***************************************************************
@@ -91,17 +91,8 @@ class MappingContentObject {
 	 * @return \OliverHader\Mapping\Processor
 	 */
 	protected function getProcessor() {
-		return $this->getObjectManager()->get(
+		return GeneralUtility::getObjectManager()->get(
 			'OliverHader\\Mapping\\Processor'
-		);
-	}
-
-	/**
-	 * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-	 */
-	protected function getObjectManager() {
-		return GeneralUtility::makeInstance(
-			'TYPO3\\CMS\\Extbase\\Object\\ObjectManager'
 		);
 	}
 
