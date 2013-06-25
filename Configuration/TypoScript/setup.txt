@@ -1,0 +1,12 @@
+mapping {
+	contentReplacement {
+		backend_layout = CONTENT
+		backend_layout {
+			table = tt_content
+			select.orderBy = sorting
+			select.where = colPos={field:__mappingAssignmentColPos}
+			select.where.insertData = 1
+			select.languageField = sys_language_uid
+		}
+	}
+}

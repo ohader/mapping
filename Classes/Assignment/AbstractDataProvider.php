@@ -33,21 +33,51 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 abstract class AbstractDataProvider implements SingletonInterface {
 
+	const ACTION_Assign = 'Assign';
+	const ACTION_Render = 'Render';
+
 	/**
+	 * @var array
+	 */
+	protected $configuration;
+
+	/**
+	 * @param string $action
 	 * @param string $tableName
+	 * @param array $record
 	 * @return DataProviderInterface
 	 * @throws InvalidDataProviderException
 	 */
-	static public function create($tableName) {
+	static public function createByContent($action, $tableName, array $record = NULL) {
 		$dataProvider = NULL;
 		$assignmentHandlers = \OliverHader\Mapping\Utility\GeneralUtility::getConfigurationService()->getAssignmentHandlers();
 
-		if (!empty($assignmentHandlers[$tableName]['dataProvider'])) {
+		foreach ($assignmentHandlers as $assignmentHandler) {
+			if (empty($assignmentHandler['dataProvider'])) {
+				continue;
+			}
+
 			/** @var $dataProvider DataProviderInterface */
-			$dataProvider = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($assignmentHandlers[$tableName]['dataProvider']);
+			$possibleDataProvider = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($assignmentHandler['dataProvider']);
+
+			if (!$possibleDataProvider instanceof DataProviderInterface) {
+				throw new InvalidDataProviderException(
+					'DataProvider "' . $assignmentHandlers[$tableName]['dataProvider'] . '" does not implement DataProviderInterface.'
+				);
+			}
+
+			$possibleDataProvider->setConfiguration($assignmentHandler);
+
+			if ($action === self::ACTION_Assign && $possibleDataProvider->canAssign($tableName, $record)) {
+				$dataProvider = $possibleDataProvider;
+				break;
+			} elseif ($action === self::ACTION_Render && $possibleDataProvider->canRender($tableName, $record)) {
+				$dataProvider = $possibleDataProvider;
+				break;
+			}
 		}
 
-		if (empty($dataProvider) || !$dataProvider instanceof DataProviderInterface) {
+		if (empty($dataProvider)) {
 			throw new InvalidDataProviderException(
 				'No valid data provider for table "' . $tableName . '" found.'
 			);
@@ -57,10 +87,25 @@ abstract class AbstractDataProvider implements SingletonInterface {
 	}
 
 	/**
+	 * @param array $configuration
+	 * @return void
+	 */
+	public function setConfiguration(array $configuration) {
+		$this->configuration = $configuration;
+	}
+
+	/**
 	 * @return \TYPO3\CMS\Lang\LanguageService
 	 */
 	protected function getLanguageService() {
 		return $GLOBALS['LANG'];
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+	 */
+	protected function getDatabaseConnection() {
+		return $GLOBALS['TYPO3_DB'];
 	}
 
 }

@@ -1,5 +1,6 @@
 <?php
 namespace OliverHader\Mapping\Assignment;
+use OliverHader\Mapping\Domain\Object\ProcessorTask;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /***************************************************************
@@ -31,13 +32,32 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class BackendLayoutDataProvider extends AbstractDataProvider implements DataProviderInterface {
+class BackendLayoutDataProvider extends AbstractDataProvider implements DataProviderInterface, SingletonInterface {
 
 	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return boolean
+	 */
+	public function canAssign($tableName, array $record = NULL) {
+		return ($tableName === 'backend_layout' && !empty($record));
+	}
+
+	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return boolean
+	 */
+	public function canRender($tableName, array $record = NULL) {
+		return (!empty($record));
+	}
+
+	/**
+	 * @param string $tableName
 	 * @param array $record
 	 * @return array
 	 */
-	public function getNodes(array $record) {
+	public function getNodes($tableName, array $record) {
 		$nodes = array();
 
 		$typoScript = $this->parseTypoScript($record['config']);
@@ -67,6 +87,97 @@ class BackendLayoutDataProvider extends AbstractDataProvider implements DataProv
 	}
 
 	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return array
+	 */
+	public function getAssignment($tableName, array $record) {
+		$assignment = NULL;
+		$assignmentData = NULL;
+
+		$assignmentTableName = $this->configuration['tableName'];
+		$assignmentFieldName = $this->configuration['fieldName'];
+
+		if ($tableName === $assignmentTableName) {
+			$assignmentData = $record[$assignmentFieldName];
+		} elseif ($tableName === 'pages') {
+			$backendLayoutRecord = $this->determineBackendLayoutRecord($record);
+			if ($backendLayoutRecord !== NULL) {
+				$assignmentData = $backendLayoutRecord[$assignmentFieldName];
+			}
+		}
+
+		if ($assignmentData !== NULL) {
+			$assignment = json_decode($assignmentData, TRUE);
+		}
+
+		return $assignment;
+	}
+
+	/**
+	 * @param ProcessorTask $processorTask
+	 * @return array
+	 */
+	public function getContentReplacement(ProcessorTask $processorTask) {
+		$contentReplacement = array();
+
+		$elements = $processorTask->getElements();
+		$assignment = $processorTask->getAssignment();
+		if (empty($elements) || empty($assignment['assignments'])) {
+			return $contentReplacement;
+		}
+
+		if (empty($this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.'])) {
+			return $contentReplacement;
+		}
+
+		$contentReplacementTypoScript = $this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.'];
+		if (empty($contentReplacementTypoScript['backend_layout']) || empty($contentReplacementTypoScript['backend_layout.'])) {
+			return $contentReplacement;
+		}
+
+		foreach ($assignment['assignments'] as $elementName => $nodeIdentifier) {
+			if (empty($elements[$elementName])) {
+				continue;
+			}
+
+			$variableName = $processorTask->getVariableService()->substitute($elements[$elementName]);
+			$processorTask->getContentObjectRenderer()->data['__mappingAssignmentColPos'] = $nodeIdentifier;
+			$contentReplacement[$variableName] = $processorTask->getContentObjectRenderer()->cObjGetSingle(
+				$contentReplacementTypoScript['backend_layout'],
+				$contentReplacementTypoScript['backend_layout.']
+			);
+		}
+
+		return $contentReplacement;
+	}
+
+	/**
+	 * @param array $pageRecord
+	 * @return NULL|array
+	 */
+	protected function determineBackendLayoutRecord(array $pageRecord) {
+		$backendLayoutRecord = NULL;
+
+		if (!empty($pageRecord['backend_layout'])) {
+			$backendLayoutId = $pageRecord['backend_layout'];
+		} else {
+			$backendLayoutId = $this->getFrontend()->cObj->getData(
+				'levelfield:-1,backend_layout_next_level,slide',
+				$pageRecord
+			);
+		}
+
+		if (!empty($backendLayoutId)) {
+			$backendLayoutRecord = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+				'*', 'backend_layout', 'uid=' . (int) $backendLayoutId . ' AND deleted=0 AND hidden=0'
+			);
+		}
+
+		return $backendLayoutRecord;
+	}
+
+	/**
 	 * @param string $data
 	 * @return array
 	 */
@@ -75,6 +186,13 @@ class BackendLayoutDataProvider extends AbstractDataProvider implements DataProv
 		$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
 		$parser->parse($data);
 		return (array) $parser->setup;
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+	 */
+	protected function getFrontend() {
+		return $GLOBALS['TSFE'];
 	}
 
 }

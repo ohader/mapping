@@ -1,5 +1,6 @@
 <?php
 namespace OliverHader\Mapping\Assignment;
+use OliverHader\Mapping\Domain\Object\ProcessorTask;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /***************************************************************
@@ -31,15 +32,51 @@ use TYPO3\CMS\Core\SingletonInterface;
 /**
  * @author Oliver Hader <oliver.hader@typo3.org>
  */
-class BackendLayoutDataProvider extends AbstractDataProvider implements DataProviderInterface {
+class DceDataProvider extends AbstractDataProvider implements DataProviderInterface, SingletonInterface {
 
 	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return boolean
+	 */
+	public function canAssign($tableName, array $record = NULL) {
+
+	}
+
+	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return boolean
+	 */
+	public function canRender($tableName, array $record = NULL) {
+
+	}
+
+	/**
+	 * @param string $tableName
 	 * @param array $record
 	 * @return array
 	 */
-	public function getNodes(array $record) {
+	public function getNodes($tableName, array $record) {
 		$nodes = array();
 		return $nodes;
+	}
+
+	/**
+	 * @param string $tableName
+	 * @param array $record
+	 * @return array
+	 */
+	public function getAssignment($tableName, array $record) {
+
+	}
+
+	/**
+	 * @param ProcessorTask $processorTask
+	 * @return array
+	 */
+	public function getContentReplacement(ProcessorTask $processorTask) {
+
 	}
 
 }

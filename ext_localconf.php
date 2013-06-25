@@ -7,4 +7,10 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_content.php']['cObjTypeAndClas
 	'MAPPING',
 	'OliverHader\Mapping\MappingContentObject'
 );
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
+	'mapping',
+	'setup',
+	'<INCLUDE_TYPOSCRIPT: source="FILE:EXT:mapping/Configuration/TypoScript/setup.txt">'
+);
 ?>

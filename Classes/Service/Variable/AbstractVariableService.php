@@ -34,6 +34,9 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 abstract class AbstractVariableService implements SingletonInterface {
 
+	const RENDER_FLUID = 'fluid';
+	const RENDER_MARKER = 'marker';
+
 	/**
 	 * @param Element $element
 	 * @return string

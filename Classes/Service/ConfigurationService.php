@@ -42,9 +42,10 @@ class ConfigurationService implements SingletonInterface {
 	 * @param string $name
 	 * @param string $tableName
 	 * @param string $fieldName
+	 * @param string $dataProvider
 	 */
 	public function setAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
-		$this->assignmentHandlers[$tableName] = array(
+		$this->assignmentHandlers[$name] = array(
 			'name' => $name,
 			'tableName' => $tableName,
 			'fieldName' => $fieldName,

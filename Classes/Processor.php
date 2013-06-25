@@ -1,8 +1,7 @@
 <?php
 namespace OliverHader\Mapping;
 use OliverHader\Mapping\Domain\Model\Element;
-use OliverHader\Mapping\Domain\Model\Structure;
-use OliverHader\Mapping\Service\Variable\AbstractVariableService;
+use OliverHader\Mapping\Domain\Object\ProcessorTask;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -37,20 +36,11 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class Processor implements SingletonInterface {
 
-	const RENDER_FLUID = 'fluid';
-	const RENDER_MARKER = 'marker';
-
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
 	 * @inject
 	 */
 	protected $objectManager;
-
-	/**
-	 * @var \OliverHader\Mapping\Domain\Repository\StructureRepository
-	 * @inject
-	 */
-	protected $structureRepository;
 
 	/**
 	 * @var \OliverHader\Mapping\Service\StructureService
@@ -65,23 +55,12 @@ class Processor implements SingletonInterface {
 	protected $markupService;
 
 	/**
-	 * @param integer $structureId
-	 * @param string $renderAs
+	 * @param ProcessorTask $processorTask
 	 * @return NULL|string
 	 */
-	public function get($structureId, $renderAs = NULL) {
-		/** @var $structure \OliverHader\Mapping\Domain\Model\Structure */
-		$structure = $this->structureRepository->findByUid($structureId);
-
-		if (empty($structure)) {
-			return NULL;
-		}
-
-		if (empty($renderAs)) {
-			$renderAs = self::RENDER_FLUID;
-		}
-
-		$variableService = $this->getVariableService($renderAs);
+	public function execute(ProcessorTask $processorTask) {
+		$structure = $processorTask->getStructure();
+		$variableService = $processorTask->getVariableService();
 		$document = $this->markupService->getDomDocument($structure->getTemplate());
 		$defaultNamespace = $document->documentElement->lookupNamespaceUri(NULL);
 		$heads = $this->structureService->getHeads($structure);
@@ -121,6 +100,7 @@ class Processor implements SingletonInterface {
 			}
 
 			$node = $nodeList->item(0);
+			$processorTask->addElement($element);
 
 			if ($element->getScope() === Element::SCOPE_Inner) {
 				foreach ($node->childNodes as $childNode) {
@@ -136,9 +116,21 @@ class Processor implements SingletonInterface {
 			}
 		}
 
-		return $this->getInnerHtml(
+		$content = $this->getInnerHtml(
 			$document->getElementsByTagName('body')->item(0)
 		);
+
+		if ($processorTask->getAssignmentDataProvider() !== NULL) {
+			$contentReplacement = $processorTask->getAssignmentDataProvider()->getContentReplacement($processorTask);
+
+			$content = str_replace(
+				array_keys($contentReplacement),
+				array_values($contentReplacement),
+				$content
+			);
+		}
+
+		return $content;
 	}
 
 	protected function getInnerHtml(\DOMNode $node) {
@@ -148,15 +140,6 @@ class Processor implements SingletonInterface {
 			$innerHtml .= $childNode->ownerDocument->saveHTML($childNode);
 		}
 		return $innerHtml;
-	}
-
-	/**
-	 * @param string $renderAs
-	 * @return AbstractVariableService
-	 */
-	protected function getVariableService($renderAs) {
-		$renderAs = ucfirst(strtolower($renderAs));
-		return $this->objectManager->get('OliverHader\\Mapping\\Service\\Variable\\' . $renderAs . 'VariableService');
 	}
 
 	/**

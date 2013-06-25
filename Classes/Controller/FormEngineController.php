@@ -1,5 +1,6 @@
 <?php
 namespace OliverHader\Mapping\Controller;
+use OliverHader\Mapping\Assignment\AbstractDataProvider;
 
 /***************************************************************
  *  Copyright notice
@@ -51,11 +52,15 @@ class FormEngineController extends AbstractController {
 		$tableName = $this->settings['FormEngine']['tableName'];
 		$record = $this->settings['FormEngine']['record'];
 
-		$dataProvider = \OliverHader\Mapping\Assignment\AbstractDataProvider::create($tableName);
+		$dataProvider = AbstractDataProvider::createByContent(
+			AbstractDataProvider::ACTION_Assign,
+			$tableName,
+			$record
+		);
 
 		$data = array(
 			'structures' => $this->getDataStructures(),
-			'nodes' => $dataProvider->getNodes($record),
+			'nodes' => $dataProvider->getNodes($tableName, $record),
 		);
 
 		$this->view->assign('data', $data);
