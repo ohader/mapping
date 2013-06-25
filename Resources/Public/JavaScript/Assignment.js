@@ -27,14 +27,6 @@
 			}
 		}
 
-		if (typeof this.assignments !== 'object') {
-			this.assignments = {
-				structure: null,
-				context: null,
-				assignments: {}
-			};
-		}
-
 		this.structureComponent.change($.proxy(this.structureChange, this));
 		this.contextComponent.change($.proxy(this.contextChange, this));
 
@@ -47,9 +39,14 @@
 	};
 
 	OliverHader_Mapping_Assignment.prototype.sanitize = function() {
-		var assignments = {}, self = this;
+		var self = this;
+		var assignments = {
+			structure: null,
+			context: null,
+			assignments: {}
+		};
 
-		if (!this.assignments.structure) {
+		if (typeof this.assignments !== 'object' || !this.assignments.structure) {
 			return assignments;
 		}
 
