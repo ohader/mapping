@@ -94,11 +94,11 @@ class Processor implements SingletonInterface {
 		}
 
 		foreach ($heads as $head) {
-			$namespacePath = $head->getXPath();
+			$namespaceXPath = $head->getXPath();
 			if (!empty($defaultNamespace)) {
-				$namespacePath = $this->markupService->getNamespaceXPath($namespacePath, 'ns');
+				$namespaceXPath = $this->markupService->getNamespaceXPath($namespaceXPath, 'ns');
 			}
-			$nodeList = $xpath->query($namespacePath);
+			$nodeList = $xpath->query($namespaceXPath);
 
 			if ($nodeList === FALSE || empty($nodeList->length)) {
 				continue;
@@ -109,11 +109,12 @@ class Processor implements SingletonInterface {
 		}
 
 		foreach ($elements as $element) {
-			$namespacePath = $element->getXPath();
+			$namespaceXPath = $element->getXPath();
 			if (!empty($defaultNamespace)) {
-				$namespacePath = $this->markupService->getNamespaceXPath($namespacePath, 'ns');
+				$namespaceXPath = $this->markupService->getNamespaceXPath($namespaceXPath, 'ns');
 			}
-			$nodeList = $xpath->query($namespacePath);
+
+			$nodeList = $xpath->query($namespaceXPath);
 
 			if ($nodeList === FALSE || empty($nodeList->length)) {
 				continue;
