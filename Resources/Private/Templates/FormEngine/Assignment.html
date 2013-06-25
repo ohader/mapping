@@ -3,23 +3,30 @@
 <f:layout name="FormEngine" />
 
 <f:section name="Content">
-	<mapping:response.headerData>
-		<script type="text/javascript">
-			jQuery(document).ready(function() {
-				var TxMappingAssignmentData = <mapping:format.jsonEncode value="{data}" />;
-				var TxMappingAssignment = new OliverHader_Mapping_Assignment('#{settings.FormEngine.elementId}', TxMappingAssignmentData);
-				// @todo Remove this debugging variable
-				Assignment = TxMappingAssignment;
-			});
-		</script>
-	</mapping:response.headerData>
+	<f:if condition="{data}">
+		<f:then>
+			<mapping:response.headerData>
+				<script type="text/javascript">
+					jQuery(document).ready(function() {
+						var TxMappingAssignmentData = <mapping:format.jsonEncode value="{data}" />;
+						var TxMappingAssignment = new OliverHader_Mapping_Assignment('#{settings.FormEngine.elementId}', TxMappingAssignmentData);
+						// @todo Remove this debugging variable
+						Assignment = TxMappingAssignment;
+					});
+				</script>
+			</mapping:response.headerData>
 
-	<div id="{settings.FormEngine.elementId}-wrapper" class="form-engine-wrapper">
-		<div id="{settings.FormEngine.elementId}-basic" class="mapping-basic">
-			<select id="{settings.FormEngine.elementId}-structure" class="mapping-basic-structure"></select>
-			<select id="{settings.FormEngine.elementId}-context" class="mapping-basic-context"></select>
-		</div>
-		<div id="{settings.FormEngine.elementId}-assignment" class="mapping-assignment"></div>
-		<input type="hidden" id="{settings.FormEngine.elementId}-data" name="{settings.FormEngine.elementName}" value="{settings.FormEngine.elementValue}" />
-	</div>
+			<div id="{settings.FormEngine.elementId}-wrapper" class="form-engine-wrapper">
+				<div id="{settings.FormEngine.elementId}-basic" class="mapping-basic">
+					<select id="{settings.FormEngine.elementId}-structure" class="mapping-basic-structure"></select>
+					<select id="{settings.FormEngine.elementId}-context" class="mapping-basic-context"></select>
+				</div>
+				<div id="{settings.FormEngine.elementId}-assignment" class="mapping-assignment"></div>
+				<input type="hidden" id="{settings.FormEngine.elementId}-data" name="{settings.FormEngine.elementName}" value="{settings.FormEngine.elementValue}" />
+			</div>
+		</f:then>
+		<f:else>
+			<strong>No valid data provider found...</strong>
+		</f:else>
+	</f:if>
 </f:section>

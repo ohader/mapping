@@ -1,6 +1,7 @@
 <?php
 namespace OliverHader\Mapping\Controller;
 use OliverHader\Mapping\Assignment\AbstractDataProvider;
+use OliverHader\Mapping\Assignment\InvalidDataProviderException;
 
 /***************************************************************
  *  Copyright notice
@@ -52,18 +53,22 @@ class FormEngineController extends AbstractController {
 		$tableName = $this->settings['FormEngine']['tableName'];
 		$record = $this->settings['FormEngine']['record'];
 
-		$dataProvider = AbstractDataProvider::createByContent(
-			AbstractDataProvider::ACTION_Assign,
-			$tableName,
-			$record
-		);
+		try {
+			$dataProvider = AbstractDataProvider::createByContent(
+				AbstractDataProvider::ACTION_Assign,
+				$tableName,
+				$record
+			);
 
-		$data = array(
-			'structures' => $this->getDataStructures(),
-			'nodes' => $dataProvider->getNodes($tableName, $record),
-		);
+			$data = array(
+				'structures' => $this->getDataStructures(),
+				'nodes' => $dataProvider->getNodes($tableName, $record),
+			);
 
-		$this->view->assign('data', $data);
+			$this->view->assign('data', $data);
+		} catch (InvalidDataProviderException $exception) {
+
+		}
 	}
 
 	protected function getDataStructures() {
