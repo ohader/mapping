@@ -127,12 +127,12 @@ class BackendLayoutDataProvider extends AbstractDataProvider implements DataProv
 			return $contentReplacement;
 		}
 
-		if (empty($this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.'])) {
+		if (empty($this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.']['backend_layout.'])) {
 			return $contentReplacement;
 		}
 
-		$contentReplacementTypoScript = $this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.'];
-		if (empty($contentReplacementTypoScript['backend_layout']) || empty($contentReplacementTypoScript['backend_layout.'])) {
+		$contentReplacementTypoScript = $this->getFrontend()->tmpl->setup['mapping.']['contentReplacement.']['backend_layout.'];
+		if (empty($contentReplacementTypoScript['default']) || empty($contentReplacementTypoScript['default.'])) {
 			return $contentReplacement;
 		}
 
@@ -141,11 +141,23 @@ class BackendLayoutDataProvider extends AbstractDataProvider implements DataProv
 				continue;
 			}
 
+			$renderingName = $contentReplacementTypoScript['default'];
+			$renderingConfiguration = $contentReplacementTypoScript['default.'];
+
+			if (!empty($contentReplacementTypoScript[$nodeIdentifier])) {
+				$renderingName = $contentReplacementTypoScript[$nodeIdentifier];
+				$renderingConfiguration = array();
+			}
+
+			if (!empty($contentReplacementTypoScript[$nodeIdentifier . '.'])) {
+				$renderingConfiguration = $contentReplacementTypoScript[$nodeIdentifier . '.'];
+			}
+
 			$variableName = $processorTask->getVariableService()->substitute($elements[$elementName]);
 			$processorTask->getContentObjectRenderer()->data['__mappingAssignmentColPos'] = $nodeIdentifier;
 			$contentReplacement[$variableName] = $processorTask->getContentObjectRenderer()->cObjGetSingle(
-				$contentReplacementTypoScript['backend_layout'],
-				$contentReplacementTypoScript['backend_layout.']
+				$renderingName,
+				$renderingConfiguration
 			);
 		}
 
