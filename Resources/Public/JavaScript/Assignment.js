@@ -22,7 +22,6 @@
 		if (this.dataComponent.val().trim()) {
 			try {
 				this.assignments = JSON.parse(this.dataComponent.val().trim());
-				this.updateData();
 			} catch (error) {
 			}
 		}
@@ -30,6 +29,7 @@
 		this.structureComponent.change($.proxy(this.structureChange, this));
 		this.contextComponent.change($.proxy(this.contextChange, this));
 
+		this.updateData();
 		this.initialize();
 	};
 
