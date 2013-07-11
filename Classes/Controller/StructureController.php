@@ -139,6 +139,12 @@ class StructureController extends AbstractController {
 		/** @var $document \DOMDocument */
 		$document = $this->markupService->getDomDocument($fileName);
 
+		$encoding = $document->encoding;
+		if (empty($encoding)) {
+			$encoding = 'utf-8';
+		}
+		$this->response->setHeader('Content-Type', 'text/html;charset=' . $encoding);
+
 		/** @var $stylesheet \DOMElement */
 		$stylesheet = $document->createElement('link');
 		$stylesheet->setAttribute('type', 'text/css');
