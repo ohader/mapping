@@ -39,18 +39,4 @@ $TCA['tx_mapping_domain_model_structure'] = array(
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_mapping_domain_model_structure.png'
 	),
 );
-
-\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler(
-	'backend_layout',
-	'backend_layout',
-	'assignments',
-	'OliverHader\\Mapping\\Assignment\\BackendLayoutDataProvider'
-);
-
-\OliverHader\Mapping\Utility\GeneralUtility::registerAssignmentHandler(
-	'dce',
-	'tx_dce_domain_model_dce',
-	'assignments',
-	'OliverHader\\Mapping\\Assignment\\DceDataProvider'
-);
 ?>

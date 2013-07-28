@@ -37,6 +37,7 @@ class GeneralUtility {
 	 * @param string $name
 	 * @param string $tableName
 	 * @param string $fieldName
+	 * @param string $dataProvider
 	 * @throws \RuntimeException
 	 */
 	static public function registerAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
@@ -70,7 +71,7 @@ class GeneralUtility {
 	 * @return \OliverHader\Mapping\Service\ConfigurationService
 	 */
 	static public function getConfigurationService() {
-		return self::getObjectManager()->get(
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
 			'OliverHader\\Mapping\\Service\\ConfigurationService'
 		);
 	}
