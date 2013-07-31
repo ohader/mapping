@@ -38,9 +38,35 @@ class GeneralUtility {
 	 * @param string $tableName
 	 * @param string $fieldName
 	 * @param string $dataProvider
-	 * @throws \RuntimeException
+	 * @return void
 	 */
 	static public function registerAssignmentHandler($name, $tableName, $fieldName, $dataProvider) {
+		self::getConfigurationService()->setAssignmentHandler($name, $tableName, $fieldName, $dataProvider);
+	}
+
+	/**
+	 * Applies TCA configuration.
+	 *
+	 * @return void
+	 */
+	static public function applyAssignmentHandlerConfiguration() {
+		$assignmentHandlers = self::getConfigurationService()->getAssignmentHandlers();
+
+		foreach ($assignmentHandlers as $assignmentHandler) {
+			self::setAssignmentHandlerTca(
+				$assignmentHandler['tableName'],
+				$assignmentHandler['fieldName']
+			);
+		}
+	}
+
+	/**
+	 * @param string $tableName
+	 * @param string $fieldName
+	 * @return void
+	 * @throws \RuntimeException
+	 */
+	static protected function setAssignmentHandlerTca($tableName, $fieldName) {
 		if (!empty($GLOBALS['TCA'][$tableName]['columns'][$fieldName])) {
 			throw new \RuntimeException(
 				'Field ' . $tableName . '.' . $fieldName . ' is already defined'
@@ -64,7 +90,6 @@ class GeneralUtility {
 
 		ExtensionManagementUtility::addTCAcolumns($tableName, $columns);
 		ExtensionManagementUtility::addToAllTCAtypes($tableName, $fieldName);
-		self::getConfigurationService()->setAssignmentHandler($name, $tableName, $fieldName, $dataProvider);
 	}
 
 	/**
